@@ -40,10 +40,16 @@ def recolter_fruits(inventaire, fruit, quantite):
     print(f"Récolté {quantite} unités de {fruit}. Inventaire mis à jour.")
     return inventaire  # Retourne l'inventaire modifié
 
-def vendre_fruits(inventaire, fruit, quantite, tresorerie):
+def ouvrir_prix(path="Data/prix.json"):
+    with open(path,'r',encoding='utf-8') as fichier:
+         prix = json.load(fichier)
+    return prix     
+    
+
+def vendre_fruits(inventaire, fruit, quantite, tresorerie,prix):
     if fruit in inventaire and inventaire[fruit] >= quantite:
         inventaire[fruit] -= quantite
-        tresorerie['montant'] += 1 * quantite  # Mise à jour correcte du dictionnaire
+        tresorerie['montant'] += prix.get(fruit,0) * quantite  # Mise à jour correcte du dictionnaire
         print(f"Vendu {quantite} unités de {fruit}. Inventaire mis à jour.")
         return inventaire, tresorerie
     else:
@@ -59,13 +65,13 @@ if __name__ == "__main__":
     # Charge ou utilise l'inventaire par défaut
     inventaire = ouvrir_inventaire()
     afficher_inventaire(inventaire)
-    
+    prix = ouvrir_prix()
     # Récolte de fruits
     inventaire = recolter_fruits(inventaire, "bananes", 10)
     inventaire = recolter_fruits(inventaire, "pommes", 5)
     
     # Vente de fruits
-    inventaire, tresorerie = vendre_fruits(inventaire, "bananes", 5, tresorerie)
+    inventaire, tresorerie = vendre_fruits(inventaire, "bananes", 5, tresorerie,prix)
     afficher_inventaire(inventaire)
     
     # Mise à jour des fichiers
