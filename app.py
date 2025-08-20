@@ -35,3 +35,14 @@ if st.sidebar.button("✅ Récolter"):
     ecrire_inventaire(inventaire)
     st.success(f"{quantite_recolte} unités de {fruit_a_recolter} récoltées avec succès !")
     st.rerun()    
+# --- Valeur du stock ---
+st.header("📦 Valeur du stock")
+valeur_totale = valeur_stock(inventaire, prix)
+
+# si tu veux voir le détail par fruit
+st.subheader("Détail par fruit")
+st.table(valeur_totale)
+
+# si tu veux aussi le total général
+total_general = sum(valeur_totale.values())
+st.metric(label="Valeur totale du stock", value=f"{total_general}$")

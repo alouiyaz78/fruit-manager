@@ -55,6 +55,13 @@ def vendre_fruits(inventaire, fruit, quantite, tresorerie,prix):
     else:
         print(f"Impossible de vendre {quantite} unités de {fruit}. Stock insuffisant.")
         return inventaire, tresorerie  # Retourne même en cas d'échec
+def valeur_stock(inventaire,prix) :
+    valeur={}
+    for fruit in inventaire:
+        quantite = inventaire[fruit]
+        prix_unitaire = prix.get(fruit,0)
+        valeur[fruit] = quantite * prix_unitaire
+    return valeur    
 
 # Exemple d'utilisation
 if __name__ == "__main__":
@@ -77,3 +84,6 @@ if __name__ == "__main__":
     # Mise à jour des fichiers
     ecrire_inventaire(inventaire)
     ecrire_tresorerie(tresorerie)
+    # retourner la valeur du stock
+    valeur = valeur_stock(inventaire,prix)
+    print(f"la valeur du stock est de {valeur} $ CAD ")
