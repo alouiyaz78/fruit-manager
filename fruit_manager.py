@@ -1,4 +1,7 @@
 import json
+import os
+
+from datetime import datetime
 
 # Initialisation correcte de l'inventaire
 inventaire = {"bananes": 130, "pommes": 60, "oranges": 45, "kiwis": 20, "ananas": 60}
@@ -62,6 +65,31 @@ def valeur_stock(inventaire,prix) :
         prix_unitaire = prix.get(fruit,0)
         valeur[fruit] = quantite * prix_unitaire
     return valeur    
+# Tresorerie 
+def enregistrer_tresorerie_historique(tresorerie,fichier="Data/tresorerie_history.json"):
+    historique=[]
+    if os.path.exists(fichier):
+        with open(fichier,"r") as f:
+            try :
+                historique = json.load(f)
+            except:
+                historique=[]    
+    historique.append({"timestamp": datetime.now().isoformat(),"tresorerie":tresorerie})
+    with open(fichier,"w") as f :
+        json.dump(historique,f,indent=4) 
+            
+def lire_tresorerie_historique(fichier="Data/tresorerie_history.json"):
+    if not os.path.exists(fichier):
+        return []  # Aucun historique encore
+    
+    with open(fichier, "r") as f:
+        try:
+            historique = json.load(f)
+        except json.JSONDecodeError:
+            historique = []
+    
+    return historique
+                
 
 # Exemple d'utilisation
 if __name__ == "__main__":
@@ -87,3 +115,7 @@ if __name__ == "__main__":
     # retourner la valeur du stock
     valeur = valeur_stock(inventaire,prix)
     print(f"la valeur du stock est de {valeur} $ CAD ")
+    #  enregistrer et Lire
+    enregistrer_tresorerie_historique(tresorerie,fichier="Data/tresorerie_history.json")
+    historique = lire_tresorerie_historique(fichier="Data/tresorerie_history.json")
+    print(f" l'historique des transactions: {historique}")
