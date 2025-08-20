@@ -1,6 +1,7 @@
 import streamlit as st
 from fruit_manager import *
-
+import altair as alt
+import pandas as pd 
 st.title("Dashborad de la plantation")
 inventaire = ouvrir_inventaire()
 prix = ouvrir_prix()
@@ -39,10 +40,33 @@ if st.sidebar.button("✅ Récolter"):
 st.header("📦 Valeur du stock")
 valeur_totale = valeur_stock(inventaire, prix)
 
-# si tu veux voir le détail par fruit
+#  le détail par fruit
 st.subheader("Détail par fruit")
 st.table(valeur_totale)
 
-# si tu veux aussi le total général
+# total général
 total_general = sum(valeur_totale.values())
 st.metric(label="Valeur totale du stock", value=f"{total_general}$")
+# --- Graphique Inventaire ---
+st.subheader("📊 Visualisation de l'inventaire")
+
+# Transformer en DataFrame
+df_inventaire = pd.DataFrame(list(inventaire.items()), columns=["Fruit", "Quantité"])
+
+# Trier du plus grand au plus petit
+df_inventaire = df_inventaire.sort_values(by="Quantité", ascending=False)
+
+# Créer un graphique Altair
+chart = (
+    alt.Chart(df_inventaire)
+    .mark_bar(cornerRadiusTopLeft=10, cornerRadiusTopRight=10)  # coins arrondis
+    .encode(
+        x=alt.X("Quantité:Q", title="Quantité en stock"),
+        y=alt.Y("Fruit:N", sort="-x", title=""),
+        color=alt.Color("Fruit:N", legend=None),  # couleurs auto
+        tooltip=["Fruit", "Quantité"],  # info au survol
+    )
+    .properties(width=600, height=400)
+)
+
+st.altair_chart(chart, use_container_width=True)
